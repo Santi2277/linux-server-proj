@@ -14,8 +14,8 @@ modifications will have to be done to the Item Catalog server too.
 
 The steps to achieve these goals are progressively explained on this document.
 
-Instance public IP is 18.130.251.208 and SSH port is 2200.
-You can access by that url http://18.130.251.208/
+Instance public IP is 18.130.251.208 and SSH port is 2200. Access by url:  
+http://18.130.251.208/
 
 
 ## Prerequisites
@@ -74,7 +74,7 @@ it. Then run `vagrant ssh` to log in.
 -p 2200 ubuntu@publicIPhere`
 
 ### 5) Configure  Uncomplicated Firewall (UFW) to allow SSH (port 2200), HTTP (port 80),  
-and NTP (port 123) connections
+### and NTP (port 123) connections
 
  - Check that it begins inactive: `sudo ufw status`
 
@@ -138,7 +138,7 @@ and NTP (port 123) connections
 
  - Check if it works: create file `sudo nano /var/www/html/myapp.wsgi` with the following  
 content and connect again
- 
+```python
 def application(environ, start_response):
     status = '200 OK'
     output = 'Hello Udacity!'
@@ -147,7 +147,7 @@ def application(environ, start_response):
     start_response(status, response_headers)
 
     return [output]
-
+```
 ### 10) Install and configure Postgres
 
  - Install: `sudo apt-get install postgresql`
@@ -211,7 +211,8 @@ if __name__ == '__main__': block (Flask mod_wsgi watch out)
 
  - Make catalog project available for Apache: create file  
 `sudo nano /etc/apache2/sites-available/catalog.conf` with that content  
-   <VirtualHost *:80>
+``` 
+  <VirtualHost *:80>
 		ServerName XX.XX.XX.XX
 		ServerAdmin admin@xx.xx.xx.xx
 		WSGIScriptAlias / /var/www/catalog.wsgi
@@ -230,12 +231,13 @@ if __name__ == '__main__': block (Flask mod_wsgi watch out)
 		LogLevel warn
 		CustomLog ${APACHE_LOG_DIR}/access.log combined
    </VirtualHost>
-
+```
  - Enable catalog virtual host: `sudo a2ensite catalog`
 
  - Restart Apache: `sudo service apache2 reload`
 
  - Create .wsgi file: `sudo nano /var/www/catalog.wsgi` with
+```
 #!/usr/bin/python
 import sys
 import logging
@@ -244,10 +246,10 @@ sys.path.insert(0,"/var/www/catalog/")
 
 from __init__ import app as application
 application.secret_key = 'Add your secret key'
-
+```
  - Restart Apache: `sudo service apache2 reload`
 
- - Edit database previous connections code: __init__.py and database_setup.py
+ - Edit database previous connections code: ``__init__.py`` and database_setup.py
 `engine = create_engine('postgresql://catalog:catalogpasswordhere@localhost/catalog')`
 (Parameters follow this structure postgresql://user:password@host_ip:port/database)
 (now it's postgresql database and before was an sqlite database)
@@ -262,17 +264,16 @@ application.secret_key = 'Add your secret key'
 
  - Restart Apache: `sudo service apache2 reload`
 
-### Make Google Auth work
+ - Now server is running on http://18.130.251.208/
 
- - Add to authorized jascript origins `http://18.130.251.208`  
-and `http://ec2-18-130-251-208.eu-west-2a.compute.amazonaws.com`
+### 15) Make Google Auth work
 
- - Add to URIs redirect `http://ec2-18-130-251-208.eu-west-2a.compute.amazonaws.com/oauth2callback`
+ - Add to authorized jascript origins `http://18.130.251.208.xip.io`
 
- - NOTE NOT WORKING google auth error (rest works)
+ - Now server is running on http://18.130.251.208.xip.io
 
 
-## Installed software summary and changes
+## Installed software summary (and changes)
 
 VirtualBox, Vagrant, update-upgrade ubuntu packages (on instance), Apache (configuration  
 changes for mod-wsgi and server run), mod-wsgi, Postgres, git, Flask, Python get modules  
@@ -281,10 +282,20 @@ used in Item Catalog server, psycopg2
 
 ## Third-party resources that helped this project
 
-https://www.vagrantup.com/
-https://aws.amazon.com/lightsail/
-https://www.udacity.com/
-https://ubuntuforums.org/
-https://stackoverflow.com/
-https://www.tutorialspoint.com/postgresql/postgresql_syntax.htm
-http://flask.pocoo.org/docs/1.0/deploying/mod_wsgi/
+https://www.vagrantup.com/  
+https://aws.amazon.com/lightsail/  
+https://www.udacity.com/  
+https://www.digitalocean.com/community/tutorials/how-to-use-ssh-to-connect-to-a-remote-server-in-ubuntu  
+https://www.ssh.com/ssh/command/  
+https://forums.aws.amazon.com/thread.jspa?threadID=160352    
+https://help.ubuntu.com/community/UFW  
+https://stackoverflow.com/  
+https://www.digitalocean.com/community/tutorials/how-to-add-delete-and-grant-sudo-privileges-to-users-on-a-debian-vps  
+https://askubuntu.com/questions/323131/setting-timezone-from-terminal  
+https://httpd.apache.org/  
+https://www.tutorialspoint.com/postgresql/postgresql_syntax.htm  
+http://flask.pocoo.org/docs/1.0/deploying/mod_wsgi/  
+https://bogotobogo.com/python/Flask/Python_Flask_HelloWorld_App_with_Apache_WSGI_Ubuntu14.php  
+https://www.1and1.com/cloud-community/learn/web-server/server-management/how-to-fix-http-error-code-500-internal-server-error/  
+https://stackoverflow.com/questions/36020374/google-permission-denied-to-generate-login-hint-for-target-domain-not-on-localh/43644795   
+
