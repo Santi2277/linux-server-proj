@@ -15,7 +15,7 @@ modifications will have to be done to the Item Catalog server too.
 The steps to achieve these goals are progressively explained on this document.
 
 Instance public IP is 18.130.251.208 and SSH port is 2200. Access by url:  
-http://18.130.251.208/
+http://18.130.251.208.xip.io
 
 
 ## Prerequisites
