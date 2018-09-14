@@ -61,6 +61,10 @@ it. Then run `vagrant ssh` to log in.
 
  - Upgrade packages: `sudo apt-get upgrade`
 
+ - Install packages kept-back: `sudo apt-get update && sudo apt-get dist-upgrade`
+
+ - Set automatic updates: `sudo dpkg-reconfigure --priority=low unattended-upgrades`
+
 ### 4) Change SSH port from 22 to 2200
 
  - Configure Lightsail firewall: on instance->networking->firewall add another rule  
@@ -90,6 +94,9 @@ it. Then run `vagrant ssh` to log in.
 
  - Allow tcp connections from port 123: `sudo ufw allow 123/tcp`
 
+ - Disable ssh connection through port 22: `sudo ufw status numbered`  
+then `sudo ufw delete X` (twice, where X is the number of the rules to 22)
+
  - Enable: `sudo ufw enable`
 
 ### 6) Give grader access
@@ -116,11 +123,15 @@ it. Then run `vagrant ssh` to log in.
  - Connect with key-pair from ubuntu user: `ssh grader@instancepubliciphere  
 -p 2200 -i /home/ubuntu/graderkey`
 
-### 8) Configure the local timezone to UTC
+### 8) Disable root login
+
+ - In /etc/ssh/sshd_config change PermitRootLogin to no
+
+### 9) Configure the local timezone to UTC
 
  - run `sudo dpkg-reconfigure tzdata`, select None of the above then UTC
 
-### 9) Install and configure Apache server
+### 10) Install and configure Apache server
 
  - Install: `sudo apt-get install apache2`
 
@@ -148,7 +159,7 @@ def application(environ, start_response):
 
     return [output]
 ```
-### 10) Install and configure Postgres
+### 11) Install and configure Postgres
 
  - Install: `sudo apt-get install postgresql`
 
@@ -159,7 +170,7 @@ def application(environ, start_response):
 
  - Connect to PostgreSQL shell: `psql`
 
-### 11) New db user named catalog with limited permissions
+### 12) New db user named catalog with limited permissions
 
  - Create db catalog: `CREATE DATABASE catalog;`
 
@@ -174,11 +185,11 @@ def application(environ, start_response):
 
  - Go out from PostgreSQL shell `\q` then return to ubuntu user 'exit'
 
-### 12) Install Git
+### 13) Install Git
 
  - Install: `sudo apt-get install git`
 
-### 13) Clone Item Catalog
+### 14) Clone Item Catalog
 
  - Change directory to /var/www (from ubuntu user)
 
@@ -190,7 +201,7 @@ to get catalog folder and remove the other files `sudo rm -rf fullstack-nanodegr
 
  - change the owner: `sudo chown -R ubuntu:ubuntu catalog/`
 
-### 14) Setup needs to make Item Catalog run on the Apache server 
+### 15) Setup needs to make Item Catalog run on the Apache server 
 
  - run  `sudo nano item-catalog.py` to put the app.run() inside the  
 if __name__ == '__main__': block (Flask mod_wsgi watch out)
@@ -266,7 +277,7 @@ application.secret_key = 'Add your secret key'
 
  - Now server is running on http://18.130.251.208/
 
-### 15) Make Google Auth work
+### 16) Make Google Auth work
 
  - Add to authorized jascript origins `http://18.130.251.208.xip.io`
 
@@ -297,5 +308,8 @@ https://www.tutorialspoint.com/postgresql/postgresql_syntax.htm
 http://flask.pocoo.org/docs/1.0/deploying/mod_wsgi/  
 https://bogotobogo.com/python/Flask/Python_Flask_HelloWorld_App_with_Apache_WSGI_Ubuntu14.php  
 https://www.1and1.com/cloud-community/learn/web-server/server-management/how-to-fix-http-error-code-500-internal-server-error/  
-https://stackoverflow.com/questions/36020374/google-permission-denied-to-generate-login-hint-for-target-domain-not-on-localh/43644795   
-
+https://stackoverflow.com/questions/36020374/google-permission-denied-to-generate-login-hint-for-target-domain-not-on-localh/43644795  
+https://help.ubuntu.com/community/AutomaticSecurityUpdates  
+https://askubuntu.com/questions/449364/what-does-without-password-mean-in-sshd-config-file  
+https://unix.stackexchange.com/questions/2942/why-change-default-ssh-port  
+https://serverfault.com/questions/265410/ubuntu-server-message-says-packages-can-be-updated-but-apt-get-does-not-update  
